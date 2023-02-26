@@ -1,7 +1,6 @@
 # Server development playbook by Alex Curtis (github.com/tripalc)
 # Playbook designed for Ubuntu Server/Desktop, this has not been tested on anything else
-
-# Configuration file
+# Configuration file, all fields (except time_zone) are a boolean with a 'true' and 'false' option.
 
 # Upgrade Packages
 upgrade_packages: false
@@ -13,7 +12,7 @@ install_qemu_agent: true
 configure_autoupdates: true
 
 # Sets timezone to the one below, useful for logs
-time_zone: Europe/London
+time_zone: Europe/London # Check timexone at: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
 
 # Enable UFW Firewall
 enable_ufw: false
