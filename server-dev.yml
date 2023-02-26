@@ -1,0 +1,149 @@
+# Server development playbook by Alex Curtis (github.com/tripalc)
+# Playbook designed for Ubuntu Server/Desktop, this has not been tested on anything else
+
+- name: Server Development Playbook
+  hosts: "*"
+  vars_files:
+   - config.yml
+  pre_tasks:
+    - name: Include playbook configuration.
+      include_vars: "{{ item }}"
+      with_fileglob:
+        - "{{ playbook_dir }}/config.yml"
+  tasks:
+    - name: Update Packages
+      become: yes
+      ansible.builtin.apt:
+        upgrade: 'yes'
+      when: upgrade_packages
+    - name: Install QEMU Guest Agent
+      become: yes
+      ansible.builtin.apt:
+        name: qemu-guest-agent
+        state: latest
+      when: install_qemu_agent
+    - name: Install Unattended-Upgrades Package
+      become: yes
+      ansible.builtin.apt:
+        name: unattended-upgrades
+        state: latest
+      when: configure_autoupdates
+    - name: Copy Unattend-Upgrades config file
+      become: yes
+      ansible.builtin.copy:
+        src: ./configs/20auto-upgrades
+        dest: /etc/apt/apt.conf.d/20auto-upgrades
+      when: configure_autoupdates
+    - name: Set timezone to Europe/London
+      become: yes
+      community.general.timezone:
+        name: '{{ time_zone }}'
+    - name: Enable UFW firewall
+      become: yes
+      community.general.ufw:
+        state: enabled
+        policy: allow
+      when: enable_ufw
+    - name: Deny Incoming traffic in UFW firewall
+      become: yes
+      community.general.ufw:
+        rule: deny
+        direction: in
+      when: ufw_deny_incoming
+    - name: Allow Outgoing traffic in UFW firewall
+      become: yes
+      community.general.ufw:
+        rule: allow
+        direction: out
+      when: ufw_allow_outgoing
+    - name: Allow SSH traffic in UFW firewall
+      become: yes
+      community.general.ufw:
+        rule: allow
+        port: ssh # If you have set a different port for ssh, change the port argument to the port you use (e.g. 1000)
+        proto: tcp
+      when: ufw_allow_ssh
+    - name: Allow OpenSSH traffic in UFW firewall
+      become: yes
+      community.general.ufw:
+        rule: allow
+        name: OpenSSH
+      when: ufw_allow_ssh
+    - name: Install Oh My Posh - Task 1/10
+      become: yes
+      ansible.builtin.get_url:
+        url: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64
+        dest: /usr/local/bin/oh-my-posh
+        mode: a+x
+      when: install_omp
+    - name: Install Oh My Posh - Task 2/10
+      ansible.builtin.file:
+        path: ~/.poshthemes
+        state: directory
+      when: install_omp
+    - name: Install Oh My Posh - Task 3/10
+      ansible.builtin.get_url:
+        url: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip
+        dest: ~/.poshthemes/themes.zip
+    - name: Install Oh My Posh - Task 4/10
+      become: yes
+      ansible.builtin.apt:
+        name: unzip
+        state: latest
+      when: install_omp
+    - name: Install Oh My Posh - Task 5/10
+      ansible.builtin.command: unzip ~/.poshthemes/themes.zip -d ~/.poshthemes
+      when: install_omp
+    - name: Install Oh My Posh - Task 6/10
+      ansible.builtin.file:
+        path: /home/alex/.poshthemes/themes.zip
+        state: absent
+      when: install_omp
+    - name: Install Oh My Posh - Task 7/10
+      ansible.builtin.file:
+        path: ~/.poshthemes/
+        recurse: yes
+        mode: u+rw
+      when: install_omp
+    - name: Install Oh My Posh - Task 8/10
+      ansible.builtin.copy:
+        src: ./configs/.bashrc
+        dest: ~/.bashrc
+      when: install_omp
+    - name: Install Oh My Posh - Task 9/10
+      ansible.builtin.copy:
+        src: ./configs/.profile
+        dest: ~/.profile
+      when: install_omp
+    - name: Install Oh My Posh - Task 10/10
+      ansible.builtin.command: oh-my-posh font install cascadiacode
+      when: install_omp
+    - name: Install fail2ban package
+      become: yes
+      ansible.builtin.apt:
+        name: fail2ban
+        state: latest
+      when: config_fail2ban
+    - name: Copy fail2ban config file
+      become: yes
+      ansible.builtin.copy:
+        src: ./configs/fail2ban.conf
+        dest: /etc/fail2ban/fail2ban.conf
+      when: config_fail2ban
+    - name: Copy fail2ban jail file
+      become: yes
+      ansible.builtin.copy:
+        src: ./configs/jail.conf
+        dest: /etc/fail2ban/jail.conf
+      when: config_fail2ban
+    - name: Restart fail2ban
+      become: yes
+      ansible.builtin.command: systemctl restart fail2ban
+      when: config_fail2ban
+    - import_tasks: ./install-docker.yml
+      when: install_docker
+    - name: Schedule shutdown in 5 seconds
+      become: yes
+      community.general.shutdown:
+        delay: 5
+      when: shutdown_when_complete

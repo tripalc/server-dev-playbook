@@ -1,0 +1,48 @@
+# Docker Installation Playbook from DigitalOcean (https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-20-04)
+# Modified by Alex Curtis (https://github.com/tripalc)
+# Playbook designed for Ubuntu Server/Desktop and to be used as part of the server development playbook, this has not been tested on anything else
+
+- name: Install aptitude
+  apt:
+    name: aptitude
+    state: latest
+- name: Install required system packages
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+    state: latest
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu focal stable
+    state: present
+- name: Update apt and install docker-ce
+  apt:
+    name: docker-ce
+    state: latest
+- name: Install Docker Module for Python
+  pip:
+    name: docker
+- name: Install Docker Compose
+  become: yes
+  apt:
+    name: docker-compose-plugin
+    state: latest
+- name: Add docker group # Post install steps
+  ansible.builtin.command: sudo groupadd docker
+  ignore_errors: true
+- name: Add user to docker group
+  ansible.builtin.command: sudo usermod -aG docker $USER
+- name: Active changes to groups
+  ansible.builtin.command: newgrp docker
+- name: Revert unwanted side-effects
+  ansible.builtin.command: newgrp $USER

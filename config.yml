@@ -1,0 +1,37 @@
+# Server development playbook by Alex Curtis (github.com/tripalc)
+# Playbook designed for Ubuntu Server/Desktop, this has not been tested on anything else
+
+# Configuration file
+
+# Upgrade Packages
+upgrade_packages: false
+
+# Install QEMU Guest Agent (for VM's to communicate with QEMU/KVM hypervisor, like TrueNAS Scale or Proxmox)
+install_qemu_agent: true
+
+# Configure automatic updates (installs unattended_upgrades package and copies the config file)
+configure_autoupdates: true
+
+# Sets timezone to the one below, useful for logs
+time_zone: Europe/London
+
+# Enable UFW Firewall
+enable_ufw: false
+# Deny incoming UFW traffic
+ufw_deny_incoming: false
+# Allow outgoing UFW traffic
+ufw_allow_outgoing: false
+# Allow SSH traffic (only disable if you aren't using ufw!)
+ufw_allow_ssh: true
+
+# Install OhMyPosh (only for ssh sessions)
+install_omp: false # Set to false if OhMyPosh is already installed.
+
+# Configures fail2ban (installs fail2ban package and copies the config files)
+config_fail2ban: true
+
+# Install and configure docker
+install_docker: true
+
+# Shutdown machine when playbook is complete, this is recommended.
+shutdown_when_complete: true
