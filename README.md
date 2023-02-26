@@ -1,4 +1,4 @@
-# <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/UbuntuCoF.svg/1024px-UbuntuCoF.svg.png?20120210072525" alt="Ubuntu Logo" style="height: 45px;"> Server Development Playbook
+# <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/UbuntuCoF.svg/1024px-UbuntuCoF.svg.png?20120210072525" alt="Ubuntu Logo" style="height: 30px;"> Server Development Playbook
 An ansible playbook for setting up ubuntu servers and vms.
 
 <h2>How to use</h2>
