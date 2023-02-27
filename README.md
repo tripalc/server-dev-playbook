@@ -6,7 +6,7 @@ An ansible playbook for setting up ubuntu servers and vms.
 <b>1. Install Ansible</b>
 To install Ansible,
     do ```sudo apt-get install ansible``` on Ubuntu/Debian
-    or ```brew install ansible``` on macOS using <a href="https://brew.sh">Homebrew</a>
+    or ```brew install ansible``` using <a href="https://brew.sh">Homebrew</a>
 
 <b>2. Clone git repository</b>
 To clone the repo,
