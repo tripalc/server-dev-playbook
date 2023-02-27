@@ -23,7 +23,7 @@ To edit the inventory, open the 'inventory.ini' file inside of nano, vim, VS Cod
 
 <b>5. Run the playbook</b>
 To run the playbook, go into a terminal and type this command:
-    ```ansible-playbook ./server-dev.yml -i ./inventory.ini --user [CLIENT USERNAME HERE] --ask-pass --ask-become-pass```
+    ```ansible-playbook ./server-dev.yml -i ./inventory.ini --user [SERVER USERNAME HERE] --ask-pass --ask-become-pass```
 *If you get an error, check you have put the username in the command, you are in the correct directory, you entered both the SSH password and the BECOME password correctly (these are usually the same, and they won't show anything when you type.), and that you have ssh'ed into them at least once on the machine that you are running the playbook from
 
 <b>If there are any other issues, </b><a href="https://github.com/tripalc/server-dev-playbook/issues">Click here.</a>
